@@ -8,5 +8,6 @@ namespace EmployeeService.Infrastructure.Configuration
 {
     public class DependencyInjection
     {
+
     }
 }
