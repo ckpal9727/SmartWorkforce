@@ -37,7 +37,7 @@ COPY --from=publish /app/publish .
 
 # expose the port your app listens to
 EXPOSE 8080
-
+EXPOSE 8081
 # Set non-root user
 USER appuser
 
