@@ -19,14 +19,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: azure/login@v2
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            attendance:
+              - 'Src/Services/AttendanceService/**'
+
+      - if: steps.changes.outputs.attendance == 'true'
+        uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - uses: azure/container-apps-deploy-action@v1
+      - if: steps.changes.outputs.attendance == 'true'
+        uses: azure/container-apps-deploy-action@v1
         with:
-          appSourcePath: .
           dockerfilePath: ./Src/Services/AttendanceService/AttendanceService.Api/AttendanceService.Api/Dockerfile
+          appSourcePath: .
           containerAppName: attendance-container
           resourceGroup: ${{ secrets.RESOURCE_GROUP }}
           registryUrl: ${{ secrets.REGISTRY_LOGIN_SERVER }}
@@ -34,8 +43,8 @@ jobs:
           registryPassword: ${{ secrets.REGISTRY_PASSWORD }}
           containerAppEnvironment: ${{ secrets.ACA_ENVIRONMENT }}
           imageToBuild: ${{ secrets.REGISTRY_LOGIN_SERVER }}/attendance-service:${{ github.sha }}
-          ingress: external              # 🔹 Makes public API URL
-          targetPort: 8080               # 🔹 Must match your API port
+          ingress: external
+          targetPort: 8080
 
   employee-service:
     runs-on: ubuntu-latest
@@ -44,14 +53,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: azure/login@v2
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            employee:
+              - 'Src/Services/EmployeeService/**'
+
+      - if: steps.changes.outputs.employee == 'true'
+        uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - uses: azure/container-apps-deploy-action@v1
+      - if: steps.changes.outputs.employee == 'true'
+        uses: azure/container-apps-deploy-action@v1
         with:
-          appSourcePath: .
           dockerfilePath: ./Src/Services/EmployeeService/EmployeeService.Api/EmployeeService.Api/Dockerfile
+          appSourcePath: .
           containerAppName: employee-container
           resourceGroup: ${{ secrets.RESOURCE_GROUP }}
           registryUrl: ${{ secrets.REGISTRY_LOGIN_SERVER }}
@@ -59,5 +77,5 @@ jobs:
           registryPassword: ${{ secrets.REGISTRY_PASSWORD }}
           containerAppEnvironment: ${{ secrets.ACA_ENVIRONMENT }}
           imageToBuild: ${{ secrets.REGISTRY_LOGIN_SERVER }}/employee-service:${{ github.sha }}
-          ingress: external              # 🔹 Required
-          targetPort: 8080               # 🔹 Must match ASP.NET Core port
+          ingress: external
+          targetPort: 8080
