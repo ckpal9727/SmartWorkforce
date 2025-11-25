@@ -36,7 +36,7 @@ ENV DOTNET_RUNNING_IN_CONTAINER=true
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 
 # Copy published output
-=======
+
 # Use .NET SDK image for build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
